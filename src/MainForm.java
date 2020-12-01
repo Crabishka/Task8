@@ -4,11 +4,9 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FileWriter;
 
-import util.JTableUtils;
-import util.ArrayUtils;
-import util.SwingUtils;
+import util.*;
+
 
 public class MainForm extends JFrame {   // в чем отличие JFrame от Jdialog
     private JPanel MainPanel;
@@ -74,9 +72,10 @@ public class MainForm extends JFrame {   // в чем отличие JFrame от
         GetFromFileButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
+                FileFunction fileFunсtion = new FileFunction();
                 try {
                     if (fileChooserOpen.showOpenDialog(MainPanel) == JFileChooser.APPROVE_OPTION) {
-                        int[][] arr = ArrayUtils.readIntArray2FromFile(fileChooserOpen.getSelectedFile().getPath());
+                        int[][] arr = fileFunсtion.readArray2FromFile(fileChooserOpen.getSelectedFile().getPath());
                         JTableUtils.writeArrayToJTable(InputTable, arr);
                     }
                 } catch (Exception e) {
@@ -103,7 +102,8 @@ public class MainForm extends JFrame {   // в чем отличие JFrame от
             public void actionPerformed(ActionEvent actionEvent) {
                 try {
                     int[][] matrix = JTableUtils.readIntMatrixFromJTable(InputTable);
-                    Output.setText(Logic.Operation(matrix));
+                    Logic logic = new Logic();
+                    Output.setText(logic.Operation(matrix));
                 } catch (Exception e) {
                     SwingUtils.showErrorMessageBox(e);
                 }
@@ -113,6 +113,7 @@ public class MainForm extends JFrame {   // в чем отличие JFrame от
         SaveIntoFileButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
+                FileFunction fileFunсtion = new FileFunction();
                 try {
                     int[][] matrix = JTableUtils.readIntMatrixFromJTable(InputTable);
                     if (fileChooserSave.showSaveDialog(MainPanel) == JFileChooser.APPROVE_OPTION) {
@@ -120,9 +121,12 @@ public class MainForm extends JFrame {   // в чем отличие JFrame от
                         if (!file.toLowerCase().endsWith(".txt")) {
                             file += ".txt";
                         }
-                        FileWriter writer = new FileWriter(file, false);
+                        Logic logic = new Logic();
+                        fileFunсtion.writeIntoFile(file,logic.Operation(matrix));
+                       /* FileWriter writer = new FileWriter(file, false);
                         writer.write(Logic.Operation(matrix));
                         writer.close();
+                        */
                     }
                 } catch (Exception e) {
                     SwingUtils.showErrorMessageBox(e);
